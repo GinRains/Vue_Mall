@@ -65,6 +65,7 @@
             location.query = query
           }
         }
+        console.log(111)
         this.$router.push(location)
         this.keyword = ""
       }
