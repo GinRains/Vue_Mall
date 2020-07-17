@@ -12,7 +12,7 @@
               <h3>
                 <a href="javascript:;"
                    :data-categoryname="category.categoryName"
-                   :data-categoryid="category.categoryId">{{category.categoryName}}</a>
+                   :data-category1id="category.categoryId">{{category.categoryName}}</a>
               </h3>
               <div class="item-list clearfix">
                 <div class="subitem">
@@ -20,14 +20,14 @@
                       :key="variety.categoryId">
                     <dt>
                       <a href="javascript:;"
-                         :data-categoryid="variety.categoryId"
+                         :data-category2id="variety.categoryId"
                          :data-categoryname="variety.categoryName">{{variety.categoryName}}</a>
                     </dt>
                     <dd>
                       <em v-for="kind in variety.categoryChild"
                           :key="kind.categoryId">
                         <a href="javascript:;"
-                           :data-categoryid="kind.categoryId"
+                           :data-category3id="kind.categoryId"
                            :data-categoryname="kind.categoryName">{{kind.categoryName}}</a>
                       </em>
                     </dd>
@@ -80,16 +80,23 @@
         }
       },
       toSearch(event) {
-        const { categoryname, categoryid } = event.target.dataset
+        const { categoryname, category1id, category2id, category3id } = event.target.dataset
 
-        if(categoryname && categoryid) {
+        if(categoryname && category1id || category2id || category3id) {
           const location = {
             name: "Search",
             query: {
-              categoryname,
-              categoryid
+              categoryName: categoryname
             }
           }
+          if(category1id) {
+            location.query.category1Id = category1id
+          }else if(category2id) {
+            location.query.category2Id = category2id
+          }else {
+            location.query.category3Id = category3id
+          }
+
 
           const params = this.$route.params;
           if(Object.keys(params).length) location.params = params
