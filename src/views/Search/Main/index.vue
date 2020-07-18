@@ -257,10 +257,22 @@
         this.searchParams = searchParams
       },
       removeSearchParams(param) {
+        // 处理路由params参数
+        if(param === "keyword") {
+          const { query } = this.$route
+          const location = {
+            name: "Search",
+            query
+          }
+
+          this.$router.push(location)
+          delete this.searchParams[param]
+          console.log(this.searchParams)
+          return void 0;
+        }
         Object.keys(this.searchParams).forEach(item => {
           if(item === param) {
-            // delete this.searchParams[item]
-            this.searchParams[item] = ""
+            delete this.searchParams[item]
           }
         })
 
@@ -281,15 +293,14 @@
         let flag = false
 
         this.searchParams.props.push(attr)
-        // 优化点击同一个属性，不发送请求
-        this.searchParams.props.length > 1 && this.searchParams.props.forEach(item => {
-          if(item === attr) {
-            this.searchParams.props.pop()
-            flag = true
-          }
-        })
 
-        if(flag) return
+        // 优化点击同一个属性，不发送请求
+        if(this.searchParams.props.length > 1 && (this.searchParams.props.indexOf(attr) !== this.searchParams.props.lastIndexOf(attr))) {
+          this.searchParams.props.pop()
+          flag = true
+        }
+
+        if(flag) return void 0
 
         this.getGoodsList()
       }
