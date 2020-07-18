@@ -66,7 +66,7 @@
           }
         }
 
-        this.$router.push(location)
+        this.$route.path === "/home" ? this.$router.push(location) : this.$router.replace(location)
         this.keyword = ""
       }
     }

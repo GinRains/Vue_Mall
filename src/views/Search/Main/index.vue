@@ -34,8 +34,15 @@
         <div class="sui-navbar">
           <div class="navbar-inner filter">
             <ul class="sui-nav">
-              <li class="active">
-                <a href="#">综合</a>
+              <li
+                @click="changeGoodsSort('1')"
+                :class="{active: sortType === '1'}">
+                <a href="javascript:;">
+                  综合
+                  <i class="iconfont"
+                     v-show="sortType === '1'"
+                     :class="sortFlag === 'desc' ? 'icondown' : 'iconup'"></i>
+                </a>
               </li>
               <li>
                 <a href="#">销量</a>
@@ -46,11 +53,15 @@
               <li>
                 <a href="#">评价</a>
               </li>
-              <li>
-                <a href="#">价格⬆</a>
-              </li>
-              <li>
-                <a href="#">价格⬇</a>
+              <li
+                @click="changeGoodsSort('2')"
+                :class="{active: sortType === '2'}">
+                <a href="javascript:;">
+                  价格
+                  <i class="iconfont"
+                     v-show="sortType === '2'"
+                     :class="sortFlag === 'desc' ? 'icondown' : 'iconup'"></i>
+                </a>
               </li>
             </ul>
           </div>
@@ -265,9 +276,8 @@
             query
           }
 
-          this.$router.push(location)
+          this.$router.replace(location)
           delete this.searchParams[param]
-          console.log(this.searchParams)
           return void 0;
         }
         Object.keys(this.searchParams).forEach(item => {
@@ -303,10 +313,30 @@
         if(flag) return void 0
 
         this.getGoodsList()
+      },
+      changeGoodsSort(sortType) {
+        const originSortType = this.sortType
+        const originSortFlag = this.sortFlag
+        let order;
+
+        if(sortType === originSortType) {
+          order = `${originSortType}:${originSortFlag === 'desc' ? 'asc' : 'desc'}`
+        }else {
+          order = `${sortType}:desc`
+        }
+        this.searchParams.order = order
+
+        this.getGoodsList()
       }
     },
     computed: {
-      ...mapGetters(["goodsList"])
+      ...mapGetters(["goodsList"]),
+      sortType() {
+        return this.searchParams.order.split(':')[0]
+      },
+      sortFlag() {
+        return this.searchParams.order.split(':')[1]
+      }
     },
     watch: {
       $route: {
@@ -418,7 +448,7 @@
                 }
                 &.active{
                   a{
-                    background: #e1251b;
+                    background: steelblue;
                     color: #fff;
                   }
                 }
@@ -456,6 +486,9 @@
                   color: #c81623;
                   strong{
                     font-weight: 700;
+                    em {
+                      margin-right: 15px;
+                    }
                     i{
                       margin-left: -5px;
                     }
