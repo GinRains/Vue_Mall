@@ -150,6 +150,7 @@
                     <div class="choose">
                         <div class="chooseArea">
                             <div class="choosed"></div>
+
                         </div>
 
                         <div class="cartWrap">
@@ -808,7 +809,7 @@
                     for (var j = 0; j < crumbData[i].data.length; j++) {
                         //生成dd
                         let oDd = document.createElement("dd");
-                        //给dd添加自定义属性 保存价钱的修改 
+                        //给dd添加自定义属性 保存价钱的修改
                         oDd.setAttribute("changePirce", crumbData[i].data[j].changePrice)
                         //给dd插入内容
                         oDd.innerHTML = crumbData[i].data[j].type;
@@ -824,7 +825,7 @@
                 //获取外层dl标签
                 let oDl = oChooseDetail.getElementsByTagName('dl');
                 //定义数组，数组中保存筛选条件，需要的时候按顺序保存和获取里边的条件
-                //并且保证只有4个值，当组数据更换的时候直接替换原有位置的值    
+                //并且保证只有4个值，当组数据更换的时候直接替换原有位置的值
                 let arr = [];
                 //先将数组中存放oDl.length个0，方便接下来按dl的顺序存放数据
                 for (let i = 0; i < oDl.length; i++) {

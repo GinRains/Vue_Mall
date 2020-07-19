@@ -71,7 +71,7 @@
             <li class="yui3-u-1-5" v-for="goods in goodsList" :key="goods.id">
               <div class="list-wrap">
                 <div class="p-img">
-                  <a href="item.html"  target="_blank"><img :src="goods.defaultImg" /></a>
+                  <router-link :to="{name: 'Detail', params: {goodsId: goods.id}}"><img :src="goods.defaultImg" /></router-link>
                 </div>
                 <div class="price">
                   <strong>
@@ -93,34 +93,12 @@
             </li>
           </ul>
         </div>
-        <div class="fr page">
-          <div class="sui-pagination clearfix">
-            <ul>
-              <li class="prev disabled">
-                <a href="#">«上一页</a>
-              </li>
-              <li class="active">
-                <a href="#">1</a>
-              </li>
-              <li>
-                <a href="#">2</a>
-              </li>
-              <li>
-                <a href="#">3</a>
-              </li>
-              <li>
-                <a href="#">4</a>
-              </li>
-              <li>
-                <a href="#">5</a>
-              </li>
-              <li class="dotted"><span>...</span></li>
-              <li class="next">
-                <a href="#">下一页»</a>
-              </li>
-            </ul>
-            <div><span>共10页&nbsp;</span></div>
-          </div>
+        <div style="margin: 20px auto">
+          <Pagination
+            :pageSize="searchParams.pageSize"
+            :continuePage="5"
+            @changePage="changePage"
+            :currentPage="searchParams.pageNo"></Pagination>
         </div>
       </div>
       <!--hotsale-->
@@ -212,7 +190,8 @@
 </template>
 
 <script>
-  import SearchSelector from "../SearchSelector"
+  import SearchSelector from "./SearchSelector"
+  import Pagination from "./Pagination"
   import { mapGetters } from "vuex"
 
   export default {
@@ -227,7 +206,7 @@
           keyword: "",
           order: "1:desc",
           pageNo: 1,
-          pageSize: 10,
+          pageSize: 4,
           props: [],
           trademark: ""
         }
@@ -285,16 +264,19 @@
             delete this.searchParams[item]
           }
         })
+        this.searchParams.pageNo = 1;
 
         this.getGoodsList()
       },
       removeProps(index) {
         this.searchParams.props.splice(index, 1)
+        this.searchParams.pageNo = 1;
 
         this.getGoodsList()
       },
       acceptTrademark(brand) {
         this.searchParams.trademark = `${brand.tmId}:${brand.tmName}`
+        this.searchParams.pageNo = 1;
 
         this.getGoodsList()
       },
@@ -311,6 +293,7 @@
         }
 
         if(flag) return void 0
+        this.searchParams.pageNo = 1;
 
         this.getGoodsList()
       },
@@ -325,7 +308,12 @@
           order = `${sortType}:desc`
         }
         this.searchParams.order = order
+        this.searchParams.pageNo = 1;
 
+        this.getGoodsList()
+      },
+      changePage(page) {
+        this.searchParams.pageNo = page;
         this.getGoodsList()
       }
     },
@@ -348,7 +336,8 @@
       deep: true
     },
     components: {
-      SearchSelector
+      SearchSelector,
+      Pagination
     }
   }
 </script>

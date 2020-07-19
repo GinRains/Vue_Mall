@@ -2,6 +2,7 @@ import Home from "@/views/Home"
 import Search from "@/views/Search"
 import Login from "@/views/Login"
 import Register from "@/views/Register"
+import Detail from "@/views/Detail"
 
 const routes = [
   {
@@ -10,27 +11,32 @@ const routes = [
   },
   {
     path: "/home",
-    component: Home,
-    meta: {
-      isShow: true
-    }
+    component: Home
   },
   {
     path: "/search/:keyword?",
     component: Search,
     name: "Search",
-    props: true,
-    meta: {
-      isShow: true
-    }
+    props: true
   },
   {
     path: "/login",
-    component: Login
+    component: Login,
+    meta: {
+      isHide: true
+    }
   },
   {
     path: "/register",
-    component: Register
+    component: Register,
+    meta: {
+      isHide: true
+    }
+  },
+  {
+    path: "/detail/:goodsId",
+    component: Detail,
+    name: "Detail"
   }
 ]
 
