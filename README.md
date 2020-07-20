@@ -129,9 +129,27 @@ npm run build
 
   * 把数据存入**sessionStorage**中，便于在AddCart路由访问数据
 
-    **难点**：async跟await深入理解
+    **难点**：1）async跟await深入理解
 
-    ​	async函数返回的值必然是一个成功或失败的promise对象
+    ​					async函数返回的值必然是一个成功或失败的promise对象
+    
+    ​			2）**a.b.c**报错解决，其中**a[0].b**也属于**a.b.c**
+    
+    ​					只要出现**a.b.c**这种情况都需要判断
+
+**a.b.c**
+
+```	js
+/**
+ * imgList[defaultIndex].imgUrl
+ */
+
+if(imgList) {
+  return imgList[defaultIndex] || {}
+}else {
+    return {}
+}
+```
 
 ### 4. AddCart
 
