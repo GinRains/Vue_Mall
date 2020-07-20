@@ -1,17 +1,70 @@
 <template>
   <div class="spec-preview">
-    <img src="./images/s1.png" />
-    <div class="event"></div>
+    <img :src="defaultImg.imgUrl" />
+    <div class="event" ref="target" @mousemove="showMask"></div>
     <div class="big">
-      <img src="./images/s1.png" />
+      <img :src="defaultImg.imgUrl" ref="bigImg" />
     </div>
-    <div class="mask"></div>
+    <div class="mask" ref="mask"></div>
   </div>
 </template>
 
 <script>
+  import { mapGetters } from "vuex"
+
   export default {
     name: "Zoom",
+    data() {
+      return {
+        defaultIndex: 0
+      }
+    },
+    mounted() {
+      this.$bus.$on("updateIndex", this.updateIndex)
+    },
+    methods: {
+      updateIndex(index) {
+        this.defaultIndex = index;
+      },
+      showMask(event) {
+        let target = this.$refs.target,
+          mask = this.$refs.mask,
+          bigImg = this.$refs.bigImg,
+          mouseX = event.offsetX,
+          mouseY = event.offsetY,
+          maskLeft = mouseX - mask.offsetWidth / 2,
+          maskTop = mouseY - mask.offsetHeight / 2;
+
+        if(maskLeft < 0) {
+          maskLeft = 0;
+        }else if(maskLeft > target.clientWidth - mask.offsetWidth) {
+          maskLeft = target.clientWidth - mask.offsetWidth
+        }
+
+        if(maskTop < 0) {
+          maskTop = 0;
+        }else if(maskTop > target.clientHeight - mask.offsetHeight) {
+          maskTop = target.clientHeight - mask.offsetHeight
+        }
+
+        mask.style.left = maskLeft + "px"
+        mask.style.top = maskTop + "px"
+
+        bigImg.style.left = -2 * maskLeft + "px"
+        bigImg.style.top = -2 * maskTop + "px"
+      }
+    },
+    computed: {
+      ...mapGetters(["imgList"]),
+      defaultImg() {
+        const { imgList, defaultIndex } = this
+        if(imgList) {
+          return imgList[defaultIndex] || {}
+        }else {
+          return {}
+        }
+      }
+    }
   }
 </script>
 

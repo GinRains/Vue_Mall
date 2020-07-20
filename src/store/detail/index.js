@@ -29,6 +29,9 @@ const getters = {
   },
   spuSaleAttrList(state) {
     return state.goodsDetailList.spuSaleAttrList || []
+  },
+  imgList(state) {
+    return (state.goodsDetailList.skuInfo || {}).skuImageList || []
   }
 }
 

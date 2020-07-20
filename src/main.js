@@ -33,6 +33,9 @@ Vue.component("TypeNav", TypeNav)
 Vue.component("SlideShow", SlideShow)
 
 new Vue({
+  beforeCreate() {
+    Vue.prototype.$bus = this;
+  },
   render: h => h(App),
   router,
   store

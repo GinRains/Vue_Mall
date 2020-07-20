@@ -3,6 +3,7 @@ import Search from "@/views/Search"
 import Login from "@/views/Login"
 import Register from "@/views/Register"
 import Detail from "@/views/Detail"
+import AddCart from "@/views/AddCart"
 
 const routes = [
   {
@@ -37,6 +38,10 @@ const routes = [
     path: "/detail/:goodsId",
     component: Detail,
     name: "Detail"
+  },
+  {
+    path: "/addcart",
+    component: AddCart
   }
 ]
 

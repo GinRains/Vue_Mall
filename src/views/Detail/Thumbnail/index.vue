@@ -1,8 +1,11 @@
 <template>
-  <div class="swiper-container">
+  <div class="swiper-container" ref="thumbnail">
     <div class="swiper-wrapper">
-      <div class="swiper-slide">
-        <img src="./images/s1.png">
+      <div class="swiper-slide" v-for="(img, index) in imgList" :key="img.id">
+        <img
+          @click="changeIndex(index)"
+          :class="{active: currentIndex === index}"
+          :src="img.imgUrl">
       </div>
     </div>
     <div class="swiper-button-next"></div>
@@ -11,8 +14,52 @@
 </template>
 
 <script>
+  import { mapGetters } from "vuex"
+  import Swiper from "swiper"
+  import "swiper/css/swiper.min.css"
+
   export default {
     name: "Thumbnail",
+    data() {
+      return {
+        currentIndex: 0
+      }
+    },
+    methods: {
+      changeIndex(index) {
+        this.currentIndex = index;
+        this.$bus.$emit("updateIndex", index)
+      }
+    },
+    computed: {
+      ...mapGetters(["imgList"])
+    },
+    watch: {
+      imgList: {
+        handler() {
+          this.$nextTick(
+            () => {
+              new Swiper(this.$refs.thumbnail, {
+                slidesPerView : 5,
+                slidesPerGroup : 5,
+
+                // 如果需要前进后退按钮
+                navigation: {
+                  nextEl: '.swiper-button-next',
+                  prevEl: '.swiper-button-prev',
+                },
+
+                // 如果需要滚动条
+                scrollbar: {
+                  el: '.swiper-scrollbar',
+                },
+              })
+            }
+          )
+        },
+        immediate: true
+      }
+    }
   }
 </script>
 
@@ -40,16 +87,12 @@
           border: 2px solid #f60;
           padding: 1px;
         }
-
-        &:hover {
-          border: 2px solid #f60;
-          padding: 1px;
-        }
       }
     }
 
     .swiper-button-next {
       left: auto;
+      margin-left: -5px;
       right: 0;
     }
 

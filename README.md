@@ -112,8 +112,32 @@ npm run build
 ### 3. Detail详情页
 
 * Detail静态页面搭建
+
 * 封装ajax请求，获取详情页数据
+
 * 渲染Detail详情页
+
+  * thumbnail缩略图
+    * 使用**Swiper**插件
+    * 加入**slidesPerView**跟**slidesPerGroup**配置
+  * 放大镜交互
+    * 事件计算**mask**位置
+    * 大图方向是预览图的反方向且移动距离是预览图的两倍
+    * 六大事件属性及元素位置属性
+
+* 跳转AddCart路由准备工作
+
+  * 把数据存入**sessionStorage**中，便于在AddCart路由访问数据
+
+    **难点**：async跟await深入理解
+
+    ​	async函数返回的值必然是一个成功或失败的promise对象
+
+### 4. AddCart
+
+* 搭建AddCart静态页面
+
+* 拿取**sessionStorage**中的数据，渲染页面
 
 
 

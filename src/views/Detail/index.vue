@@ -47,19 +47,20 @@
                 <dt>{{spuSaleAttr.saleAttrName}}</dt>
                 <dd
                   change-price="0"
-                  class="active"
-                  v-for="spuSale in spuSaleAttr.spuSaleAttrValueList"
+                  v-for="(spuSale, index) in spuSaleAttr.spuSaleAttrValueList"
+                  :class="{active: spuSale.isChecked === '1'}"
+                  @click="changeColor(spuSaleAttr.spuSaleAttrValueList, index)"
                   :key="spuSale.id">{{spuSale.saleAttrValueName}}</dd>
               </dl>
             </div>
             <div class="cart-wrap">
               <div class="control">
-                <span class="goods">1</span>
-                <button class="increment">+</button>
-                <button class="decrement">-</button>
+                <span class="goods">{{skuNum}}</span>
+                <button class="increment" @click="skuNum++">+</button>
+                <button class="decrement" @click="skuNum > 1 ? skuNum-- : skuNum = 1">-</button>
               </div>
               <div class="add-good">
-                <button class="add">加入购物车</button>
+                <button class="add" @click="addCart(skuInfo.id, skuNum)">加入购物车</button>
               </div>
             </div>
           </div>
@@ -270,6 +271,11 @@
 
   export default {
     name: "Detail",
+    data() {
+      return {
+        skuNum: 1
+      }
+    },
     mounted() {
       this.getGoodsDetailList()
     },
@@ -277,13 +283,31 @@
       getGoodsDetailList() {
         const { goodsId } = this.$route.params;
         this.$store.dispatch("getGoodsDetailList", goodsId)
+      },
+      changeColor(skuList, index) {
+        skuList.forEach(item => {
+          item.isChecked = "0"
+        })
+
+        skuList[index].isChecked = "1"
+      },
+      async addCart(skuId, skuNum) {
+        try {
+          const response = await this.$store.dispatch("getAddShopcart", {skuId, skuNum})
+          alert(response)
+          sessionStorage.setItem("SKUINFO_KEY", JSON.stringify(this.skuInfo))
+
+          this.$router.push(`/addcart?skuNum=${skuNum}`)
+        }catch(error) {
+          alert(error.message)
+        }
       }
     },
     computed: {
       ...mapState({
         goodsDetailList: state => state.detail.goodsDetailList
       }),
-      ...mapGetters(["categoryView", "skuInfo", "spuSaleAttrList"])
+      ...mapGetters(["categoryView", "skuInfo", "spuSaleAttrList", "imgList"])
     },
     components: {
       Thumbnail,
