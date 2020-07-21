@@ -1,19 +1,47 @@
-import { reqAddShopcart } from "@/api";
+import { reqAddShopcart, reqShopCart, updateIsChecked } from "@/api";
 
 const state = {
+  cartList: []
 }
 
 const mutations = {
+  UPDATECARTLIST(state, data) {
+    state.cartList = data;
+  }
 }
 
 const actions = {
-  async getAddShopcart({commit}, { skuId, skuNum }) {
+  async getAddShopCart({commit}, { skuId, skuNum }) {
     const response = await reqAddShopcart(skuId, skuNum)
     if(response.code === 200) {
       return "加入购物车成功！"
     }else {
       throw new Error("加入购物车失败！")
     }
+  },
+  async getCartList({commit}) {
+    const response = await reqShopCart()
+    if(response.code === 200) {
+      commit("UPDATECARTLIST", response.data)
+    }
+  },
+  async changeIsChecked({commit}, { skuId, isChecked }) {
+    const response = await updateIsChecked(skuId, isChecked)
+    if(response.code === 200) {
+      return "状态修改成功"
+    }else {
+      return Promise.reject(new Error("修改状态失败"))
+    }
+  },
+  changeAllIsChecked({commit, state, dispatch}, isChecked) {
+    const promises = []
+    state.cartList.forEach(cart => {
+      if(cart.isChecked === isChecked) return
+      const promise = dispatch("changeIsChecked", {skuId: cart.skuId, isChecked: isChecked})
+      promises.push(promise)
+    })
+
+    return Promise.all(promises)
   }
 }
 

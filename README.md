@@ -118,7 +118,7 @@ npm run build
 * 渲染Detail详情页
 
   * thumbnail缩略图
-    * 使用**Swiper**插件
+    * 使用**Swiper@5**版本插件
     * 加入**slidesPerView**跟**slidesPerGroup**配置
   * 放大镜交互
     * 事件计算**mask**位置
@@ -129,8 +129,23 @@ npm run build
 
   * 把数据存入**sessionStorage**中，便于在AddCart路由访问数据
 
-    **难点**：1）async跟await深入理解
+  * input表单事件
 
+    * onfocus
+    * 并没有什么特别的，就是当焦点转移到（点击，tab切换） input 框上边的时候触发；
+    * oninput
+      * 当oninput触发时，已经可以拿到value，不能拿到keycode，不可以阻止默认事件了
+      * 关键是明明每次输入框的值变化时触发的，抢了onchange的饭碗
+      * 这个事件，仅在**input**和**textarea**支持
+    * onchange
+      * 在失去焦点且表单数据改变时触发，但比onblur事件快
+      * 如果表单数据没有改变，是不会触发onchange事件的
+    * onblur
+      * 失去焦点时触发，但比onchange**慢**
+      * 能获取到 新的value，但不能获取到**keycode**
+    
+    **难点**：1）async跟await深入理解
+    
     ​					async函数返回的值必然是一个成功或失败的promise对象
     
     ​			2）**a.b.c**报错解决，其中**a[0].b**也属于**a.b.c**
@@ -154,8 +169,22 @@ if(imgList) {
 ### 4. AddCart
 
 * 搭建AddCart静态页面
-
 * 拿取**sessionStorage**中的数据，渲染页面
+* 点击结算进入ShopCart购物车页面
+  * 进入ShopCart准备工作
+    * 添加一个**userTempId**（用户临时ID）
+    * 将创建的用户临时ID存在localStorage和vuex，并携带在请求头里面
+      * 这样后端便能通过临时ID获取购物车的商品
 
+### 5. ShopCart购物车页面
 
-
+* 搭建ShopCart静态页面
+* 将请求到的数据进行页面渲染
+* 添加交互逻辑
+  * 统计商品数量及商品总价格
+    * 用到**reduce**高级数组API
+    * 如果回调中需要对当前值进行判断，须将回调函数的返回值写在外面
+      * 如果写在里面，当不满足条件的item，他没有返回之前的总和，会出现**NaN**情况
+  * 商品前面表单状态切换效果
+    * 每一个状态切换都需要按照文档的请求参数，请求改变状态及返回数据
+    * 全选切换状态须借用**Promise.all**函数进行封装请求

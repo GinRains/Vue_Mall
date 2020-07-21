@@ -4,6 +4,7 @@ import Login from "@/views/Login"
 import Register from "@/views/Register"
 import Detail from "@/views/Detail"
 import AddCart from "@/views/AddCart"
+import ShopCart from "@/views/ShopCart"
 
 const routes = [
   {
@@ -42,6 +43,10 @@ const routes = [
   {
     path: "/addcart",
     component: AddCart
+  },
+  {
+    path: "/shopcart",
+    component: ShopCart
   }
 ]
 

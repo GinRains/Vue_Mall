@@ -17,7 +17,7 @@
         </div>
         <div class="right-gocart">
           <router-link href="#" class="sui-btn btn-xlarge" :to="`/detail/${skuInfo.id}`">查看商品详情</router-link>
-          <a href="cart.html" class="sui-btn btn-xlarge btn-danger " target="_blank">去购物车结算 &gt; </a>
+          <router-link href="cart.html" class="sui-btn btn-xlarge btn-danger" to="/shopcart">去购物车结算 &gt; </router-link>
         </div>
       </div>
     </div>
