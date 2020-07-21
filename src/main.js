@@ -7,6 +7,7 @@ import "./mock/mockServe"
 
 import TypeNav from "./components/TypeNav"
 import SlideShow from "./components/SlideShow"
+import Pagination from "./components/Pagination"
 
 Vue.config.productionTip = false
 
@@ -31,6 +32,7 @@ VueRouter.prototype.replace = function (location, onResolved, onRejected) {
 
 Vue.component("TypeNav", TypeNav)
 Vue.component("SlideShow", SlideShow)
+Vue.component("Pagination", Pagination)
 
 new Vue({
   render: h => h(App),
