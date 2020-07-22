@@ -31,7 +31,7 @@
             <span class="sum">{{cart.skuNum * cart.skuPrice}}</span>
           </li>
           <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
+            <a href="javascript:;" class="sindelet" @click="removeGoods(cart)">删除</a>
             <br>
             <a href="#none">移到收藏</a>
           </li>
@@ -44,7 +44,7 @@
         <span>全选</span>
       </div>
       <div class="option">
-        <a href="#none">删除选中的商品</a>
+        <a href="javascript:;" @click="removeAllGoods">删除选中的商品</a>
         <a href="#none">移到我的关注</a>
         <a href="#none">清除下柜商品</a>
       </div>
@@ -56,7 +56,7 @@
           <i class="summoney">{{totalPrice}}</i>
         </div>
         <div class="sumbtn">
-          <a class="sum-btn" href="###" target="_blank">结算</a>
+          <router-link class="sum-btn" href="javascript:;" to="/trade">结算</router-link>
         </div>
       </div>
     </div>
@@ -95,6 +95,23 @@
         }catch(error) {
           alert(error.message)
         }
+      },
+      async removeGoods(cart) {
+        try {
+          const response = await this.$store.dispatch("deleteGoodsInfo", cart.skuId)
+          alert(response)
+          this.getCartList()
+        }catch(error) {
+          alert(error.message)
+        }
+      },
+      async removeAllGoods() {
+        try {
+          const response = await this.$store.dispatch("deleteAllGoodsInfo")
+          if(response) this.getCartList()
+        }catch(error) {
+          alert(error.message)
+        }
       }
     },
     computed:{
@@ -120,12 +137,13 @@
       },
       isAllChecked: {
         get() {
-          return this.cartList.every(item => item.isChecked)
+          return this.cartList.every(item => item.isChecked) && this.cartList.length > 0
         },
         async set(newVal) {
           try {
             const response = await this.$store.dispatch("changeAllIsChecked", newVal === true ? 1 : 0)
-            if(response) this.getCartList()
+            alert(response[0])
+            this.getCartList()
           }catch(error) {
             alert(error.message)
           }

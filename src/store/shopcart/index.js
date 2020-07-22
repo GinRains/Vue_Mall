@@ -1,4 +1,4 @@
-import { reqAddShopcart, reqShopCart, updateIsChecked } from "@/api";
+import { reqAddShopcart, reqShopCart, updateIsChecked, deleteGoods } from "@/api";
 
 const state = {
   cartList: []
@@ -33,7 +33,7 @@ const actions = {
       return Promise.reject(new Error("修改状态失败"))
     }
   },
-  changeAllIsChecked({commit, state, dispatch}, isChecked) {
+  changeAllIsChecked({state, dispatch}, isChecked) {
     const promises = []
     state.cartList.forEach(cart => {
       if(cart.isChecked === isChecked) return
@@ -41,6 +41,24 @@ const actions = {
       promises.push(promise)
     })
 
+    return Promise.all(promises)
+  },
+  async deleteGoodsInfo({commit}, skuId) {
+    const response = await deleteGoods(skuId)
+    if(response.code === 200) {
+      return "商品删除成功"
+    }else {
+      return Promise.reject(new Error("商品删除失败"))
+    }
+  },
+  deleteAllGoodsInfo({state, dispatch}) {
+    const promises = []
+    state.cartList.forEach(cart => {
+      if(cart.isChecked) {
+        let promise = dispatch("deleteGoodsInfo", cart.skuId)
+        promises.push(promise)
+      }
+    })
     return Promise.all(promises)
   }
 }

@@ -17,6 +17,11 @@ service.interceptors.request.use(
       config.headers.userTempId = userTempId;
     }
 
+    const token = store.state.userabout.userInfo.token;
+    if(token) {
+      config.headers.token = token;
+    }
+
     return config;
   }
 )

@@ -85,8 +85,9 @@
                 <div class="commit">
                   <i class="command">已有<span>2000</span>人评价</i>
                 </div>
-                <div class="operate">
-                  <a href="success-cart.html" target="_blank" class="sui-btn btn-bordered btn-danger">加入购物车</a>
+                <div class="operate" @click="addGoodsToShopCart(goods.id)">
+                  <a href="javascript:;"
+                               class="sui-btn btn-bordered btn-danger">加入购物车</a>
                   <a href="javascript:void(0);" class="sui-btn btn-bordered">收藏</a>
                 </div>
               </div>
@@ -315,6 +316,15 @@
       changePage(page) {
         this.searchParams.pageNo = page;
         this.getGoodsList()
+      },
+      async addGoodsToShopCart(skuId) {
+        const goodsInfo = {skuId, skuNum: 1}
+        try {
+          const response = await this.$store.dispatch("getAddShopCart", goodsInfo)
+          if(response) alert(response)
+        }catch(error) {
+          alert(error.message)
+        }
       }
     },
     computed: {

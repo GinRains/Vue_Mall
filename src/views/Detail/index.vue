@@ -293,7 +293,7 @@
       },
       async addCart(skuId, skuNum) {
         try {
-          const response = await this.$store.dispatch("getAddShopcart", {skuId, skuNum})
+          const response = await this.$store.dispatch("getAddShopCart", {skuId, skuNum})
           alert(response)
           sessionStorage.setItem("SKUINFO_KEY", JSON.stringify(this.skuInfo))
 
