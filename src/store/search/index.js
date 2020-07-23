@@ -24,8 +24,8 @@ const getters = {
   attrsList(state) {
     return state.goodsListInfo.attrsList || [];
   },
-  goodsList(state) {
-    return state.goodsListInfo.goodsList || [];
+  goodsListInfo(state) {
+    return state.goodsListInfo;
   },
   trademarkList(state) {
     return state.goodsListInfo.trademarkList || [];

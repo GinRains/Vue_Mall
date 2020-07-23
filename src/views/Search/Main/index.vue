@@ -68,7 +68,7 @@
         </div>
         <div class="goods-list">
           <ul class="yui3-g">
-            <li class="yui3-u-1-5" v-for="goods in goodsList" :key="goods.id">
+            <li class="yui3-u-1-5" v-for="goods in goodsListInfo.goodsList" :key="goods.id">
               <div class="list-wrap">
                 <div class="p-img">
                   <a href="item.html"  target="_blank"><img :src="goods.defaultImg" /></a>
@@ -305,7 +305,7 @@
       }
     },
     computed: {
-      ...mapGetters(["goodsList"]),
+      ...mapGetters(["goodsListInfo"]),
       sortType() {
         return this.searchParams.order.split(':')[0]
       },
