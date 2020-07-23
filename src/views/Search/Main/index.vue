@@ -71,7 +71,9 @@
             <li class="yui3-u-1-5" v-for="goods in goodsListInfo.goodsList" :key="goods.id">
               <div class="list-wrap">
                 <div class="p-img">
-                  <a href="item.html"  target="_blank"><img :src="goods.defaultImg" /></a>
+                  <router-link href="javascript:;" :to="`/detail/${goods.id}`">
+                    <img :src="goods.defaultImg" />
+                  </router-link>
                 </div>
                 <div class="price">
                   <strong>
@@ -96,6 +98,7 @@
         <Pagination
           :continuePage="5"
           :currentPage="searchParams.pageNo"
+          @updatePage="updatePage"
           :pageSize="searchParams.pageSize"></Pagination>
       </div>
       <!--hotsale-->
@@ -260,16 +263,19 @@
             delete this.searchParams[item]
           }
         })
+        this.searchParams.pageNo = 1;
 
         this.getGoodsList()
       },
       removeProps(index) {
         this.searchParams.props.splice(index, 1)
+        this.searchParams.pageNo = 1;
 
         this.getGoodsList()
       },
       acceptTrademark(brand) {
         this.searchParams.trademark = `${brand.tmId}:${brand.tmName}`
+        this.searchParams.pageNo = 1;
 
         this.getGoodsList()
       },
@@ -286,6 +292,7 @@
         }
 
         if(flag) return void 0
+        this.searchParams.pageNo = 1;
 
         this.getGoodsList()
       },
@@ -300,7 +307,12 @@
           order = `${sortType}:desc`
         }
         this.searchParams.order = order
+        this.searchParams.pageNo = 1;
 
+        this.getGoodsList()
+      },
+      updatePage(page) {
+        this.searchParams.pageNo = page;
         this.getGoodsList()
       }
     },

@@ -5,7 +5,13 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+          <p v-if="Object.keys(userInfo).length">
+            <span>您好</span>
+            <a href="javascript:;">{{userInfo.name}}</a>
+            <a href="javascript:;" class="register" @click="quit">退出登录</a>
+          </p>
+
+          <p v-else>
             <span>请</span>
             <router-link to="/login">登录</router-link>
             <router-link to="register" class="register">免费注册</router-link>
@@ -41,6 +47,8 @@
 </template>
 
 <script>
+  import { mapState } from "vuex"
+
   export default {
     name: "Header",
     data() {
@@ -68,7 +76,22 @@
 
         this.$route.path === "/home" ? this.$router.push(location) : this.$router.replace(location)
         this.keyword = ""
+      },
+      async quit() {
+        try {
+          const result = await this.$store.dispatch("userQuit")
+          if(result) alert(result)
+
+          this.$router.push("/home")
+        }catch(error) {
+          alert(error.message)
+        }
       }
+    },
+    computed: {
+      ...mapState({
+        userInfo: state => state.user.userLogin
+      })
     }
   }
 </script>

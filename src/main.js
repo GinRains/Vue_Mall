@@ -35,6 +35,9 @@ Vue.component("SlideShow", SlideShow)
 Vue.component("Pagination", Pagination)
 
 new Vue({
+  beforeCreate() {
+    Vue.prototype.$bus = this
+  },
   render: h => h(App),
   router,
   store

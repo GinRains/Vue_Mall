@@ -2,6 +2,9 @@ import Home from "@/views/Home"
 import Search from "@/views/Search"
 import Login from "@/views/Login"
 import Register from "@/views/Register"
+import Detail from "@/views/Detail"
+import AddCart from "@/views/AddCartSuccess"
+import ShopCart from "@/views/ShopCart"
 
 const routes = [
   {
@@ -10,27 +13,39 @@ const routes = [
   },
   {
     path: "/home",
-    component: Home,
-    meta: {
-      isShow: true
-    }
+    component: Home
   },
   {
     path: "/search/:keyword?",
     component: Search,
     name: "Search",
-    props: true,
-    meta: {
-      isShow: true
-    }
+    props: true
   },
   {
     path: "/login",
-    component: Login
+    component: Login,
+    meta: {
+      isHide: true
+    }
   },
   {
     path: "/register",
-    component: Register
+    component: Register,
+    meta: {
+      isHide: true
+    }
+  },
+  {
+    path: "/detail/:skuId",
+    component: Detail
+  },
+  {
+    path: "/addcart/:skuNum",
+    component: AddCart
+  },
+  {
+    path: "/shopcart",
+    component: ShopCart
   }
 ]
 

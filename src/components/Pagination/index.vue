@@ -1,18 +1,17 @@
 <template>
   <div class="pagination">
-    <button>1</button>
-    <button>上一页</button>
-    <button>···</button>
+    <button ref="prev" :disabled="currentPage === 1" @click="changePage(currentPage - 1)">上一页</button>
+    <button v-show="currentPage !== 1" @click="changePage(1)">1</button>
+    <button v-show="currentPage > 2">···</button>
 
-    <button>3</button>
-    <button>4</button>
-    <button>5</button>
-    <button>6</button>
-    <button>7</button>
+    <button v-for="page in startToEnd.end" :key="page"
+            v-if="page >= startToEnd.start"
+            @click="changePage(page)"
+            :class="{active: currentPage === page}">{{page}}</button>
 
-    <button>···</button>
-    <button>{{totalPage}}</button>
-    <button>上一页</button>
+    <button v-show="currentPage < totalPage - 1">···</button>
+    <button v-show="currentPage !== totalPage" @click="changePage(totalPage)">{{totalPage}}</button>
+    <button ref="next" :disabled="currentPage === totalPage" @click="changePage(currentPage + 1)">下一页</button>
 
     <button style="margin-left: 30px">共 {{total}} 条</button>
   </div>
@@ -24,6 +23,11 @@
   export default {
     name: "Pagination",
     props: ["continuePage", "currentPage", "pageSize"],
+    methods: {
+      changePage(page) {
+        this.$emit("updatePage", page)
+      }
+    },
     computed: {
       ...mapState({
         total: state => state.search.goodsListInfo.total
@@ -32,7 +36,28 @@
         return Math.ceil(this.total / this.pageSize)
       },
       startToEnd() {
-
+        let { totalPage, continuePage, currentPage } = this,
+          start,
+          dis,
+          end;
+        if(totalPage < continuePage) {
+          start = 1
+          end = totalPage
+        }else {
+          start = currentPage - Math.floor(continuePage / 2)
+          end = currentPage + Math.floor(continuePage / 2)
+          if(start < 1) {
+            dis = currentPage - start;
+            start += dis;
+            end += dis;
+          }
+          if(end > totalPage) {
+            dis = end - currentPage;
+            start -= dis
+            end -= dis
+          }
+        }
+        return { start, end }
       }
     }
   }
@@ -64,7 +89,7 @@
       }
 
       &.active {
-        cursor: not-allowed;
+        cursor: pointer;
         background-color: #409eff;
         color: #fff;
       }

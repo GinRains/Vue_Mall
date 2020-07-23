@@ -1,6 +1,7 @@
 import axios from "axios"
 import Nprogress from "nprogress"
 import "nprogress/nprogress.css"
+import store from "@/store"
 
 const service = axios.create({
   baseURL: "/api",
@@ -9,6 +10,16 @@ const service = axios.create({
 
 service.interceptors.request.use(
   config => {
+    const userTempId = store.state.user.userTempId;
+    if(userTempId) {
+      config.headers.userTempId = userTempId
+    }
+
+    const token = store.state.user.userLogin.token
+    if(token) {
+      config.headers.token = token
+    }
+
     Nprogress.start()
     return config;
   }

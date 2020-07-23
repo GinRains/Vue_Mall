@@ -2,7 +2,7 @@
   <div>
     <Header></Header>
     <router-view></router-view>
-    <Footer v-if="$route.meta.isShow"></Footer>
+    <Footer v-if="!$route.meta.isHide"></Footer>
   </div>
 </template>
 
