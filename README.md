@@ -206,5 +206,31 @@ if(imgList) {
     * 登录成功把数据存在vuex，并在localStorage中保存
     * 设置自动登录，只需在vuex里的登录数据在localStorage里面读取，并赋值给vuex里的用户登录信息
     * 设置退出登录，退出登录后，先清除localStorage里的用户数据，在清除vuex里的用户数据
+  
 * userTempId（用户临时ID）跟token（用户登录后标识信息）
+  
+  * 用户临时ID跟token都需要在携带在封装的Ajax的请求头上
+  
   * 在临时ID添加商品到购物车，再登录添加商品，它会把临时ID购物车里的商品信息合并到登录后的账号购物车中
+  
+    **难点**：关于**Ajax**语法
+  
+    ​	axios发送请求的基本语法:
+    ​    axios({
+    ​      url: '路径', // 这个路径中可以包含params或query参数
+    ​      method: 'get/post/put/delete',
+    ​      params: {}, // 包含query参数的对象
+    ​      data: {}, // 包含请求体参数的对象
+    ​    })
+    ​    axios.get(url, {配置})  // {params: {id: 1}}
+    ​    axios.delete(url, {配置})
+    ​    axios.post(url, data数据对象)
+    ​    axios.put(url, data数据对象)
+  
+      使用axios发ajax请求携带参数:
+         params参数: 只能拼在路径中: /admin/product/baseTrademark/delete/1
+         query参数: 
+          拼在路径中的?后面: /admin/product/baseTrademark?id=1
+          通过params配置来指定: axios({params: {id: 1}})
+        请求体参数: 
+          通过data配置或post()/put()的第二个参数指定
