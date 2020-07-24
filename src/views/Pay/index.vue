@@ -7,8 +7,8 @@
           <span class="success-info">订单提交成功，请您及时付款，以便尽快为您发货~~</span>
         </h4>
         <div class="paymark">
-          <span class="fl">请您在提交订单<em class="orange time">4小时</em>之内完成支付，超时订单会自动取消。订单号：<em>145687</em></span>
-          <span class="fr"><em class="lead">应付金额：</em><em class="orange money">￥17,654</em></span>
+          <span class="fl">请您在提交订单<em class="orange time">4小时</em>之内完成支付，超时订单会自动取消。订单号：<em>{{$route.query.tradeNo}}</em></span>
+          <span class="fr"><em class="lead">应付金额：</em><em class="orange money">￥{{payData.totalFee}}</em></span>
         </div>
       </div>
       <div class="checkout-info">
@@ -65,7 +65,7 @@
         <div class="hr"></div>
 
         <div class="submit">
-          <router-link class="btn" to="/paysuccess">立即支付</router-link>
+          <a class="btn" @click="promptlyPay">立即支付</a>
         </div>
         <div class="otherpay">
           <div class="step-tit">
@@ -82,8 +82,76 @@
 </template>
 
 <script>
+  import QRCode from 'qrcode'
+
   export default {
     name: 'Pay',
+    data() {
+      return {
+        status: 0,
+        payData: {}
+      }
+    },
+    mounted() {
+      this.payOrder()
+    },
+    methods: {
+      async payOrder() {
+        const { tradeNo } = this.$route.query;
+        const response = await this.$API.reqPayOrder(tradeNo)
+        if(response.code === 200) {
+          this.payData = response.data
+        }
+      },
+      async promptlyPay() {
+        // With promises
+        try {
+          const result = await QRCode.toDataURL(this.payData.codeUrl)
+
+          this.$alert(`<img src="${result}" />`, '请使用微信扫码支付', {
+            dangerouslyUseHTMLString: true,
+            center: true,
+            showClose: false,
+            showCancelButton: true,
+            cancelButtonText: "支付中遇到了问题",
+            confirmButtonText: "我已成功支付",
+            beforeClose: (action, instance, done) => {
+              if(action === "confirm") {
+                if(this.status === 200) {
+                  clearInterval(this.timer)
+                  this.timer = null
+                  done()
+                  this.$router.push("/paysuccess")
+                }else {
+                  this.$message.warning("请确保支付成功")
+                }
+              }else if(action === "cancel") {
+                clearInterval(this.timer)
+                this.timer = null
+                this.$message.warning("请联系前台小姐姐")
+                done()
+              }
+            }
+          }).then(() => {}).catch(() => {})
+        }catch(error) {
+          this.$message.error(error.message)
+        }
+
+        if(!this.timer) {
+          const { orderId } = this.payData
+          this.timer = setInterval(async () => {
+            const response = await this.$API.reqPayStatus(orderId)
+            if(response.code === 200) {
+              this.status = response.code
+              clearInterval(this.timer)
+              this.timer = null
+              this.$msgbox.close()
+              this.$router.push("/paysuccess")
+            }
+          }, 1500)
+        }
+      }
+    }
   }
 </script>
 

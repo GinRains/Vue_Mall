@@ -27,3 +27,15 @@ export const reqUserLogin = userInfo => beg.post("/user/passport/login", userInf
 
 // 用户退出登录
 export const reqLogOut = () => beg.get("/user/passport/logout")
+
+// 获取订单交易页信息
+export const reqOrderInfo = () => beg.get("/order/auth/trade")
+
+// 请求订单数据
+export const reqOrderList = (tradeNo, orderOptions) => beg.post(`/order/auth/submitOrder?tradeNo=${tradeNo}`, orderOptions)
+
+// 请求支付订单
+export const reqPayOrder = orderId => beg.get(`/payment/weixin/createNative/${orderId}`)
+
+// 请求订单支付状态
+export const reqPayStatus = orderId => beg.get(`/payment/weixin/queryPayStatus/${orderId}`)

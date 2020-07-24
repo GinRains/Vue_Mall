@@ -210,27 +210,113 @@ if(imgList) {
 * userTempId（用户临时ID）跟token（用户登录后标识信息）
   
   * 用户临时ID跟token都需要在携带在封装的Ajax的请求头上
-  
   * 在临时ID添加商品到购物车，再登录添加商品，它会把临时ID购物车里的商品信息合并到登录后的账号购物车中
   
-    **难点**：关于**Ajax**语法
+* 退出登录
+
+  * 清除存在locaStorage上的用户登录信息
+* 清除从localStorage上读取数据的vuex登录信息
   
-    ​	axios发送请求的基本语法:
-    ​    axios({
-    ​      url: '路径', // 这个路径中可以包含params或query参数
-    ​      method: 'get/post/put/delete',
-    ​      params: {}, // 包含query参数的对象
-    ​      data: {}, // 包含请求体参数的对象
-    ​    })
-    ​    axios.get(url, {配置})  // {params: {id: 1}}
-    ​    axios.delete(url, {配置})
-    ​    axios.post(url, data数据对象)
-    ​    axios.put(url, data数据对象)
+  **难点**：关于**Ajax**语法
   
-      使用axios发ajax请求携带参数:
-         params参数: 只能拼在路径中: /admin/product/baseTrademark/delete/1
-         query参数: 
-          拼在路径中的?后面: /admin/product/baseTrademark?id=1
-          通过params配置来指定: axios({params: {id: 1}})
-        请求体参数: 
-          通过data配置或post()/put()的第二个参数指定
+  ​	axios发送请求的基本语法:
+  ​    axios({
+  ​      url: '路径', // 这个路径中可以包含params或query参数
+  ​      method: 'get/post/put/delete',
+  ​      params: {}, // 包含query参数的对象
+  ​      data: {}, // 包含请求体参数的对象
+  ​    })
+  ​    axios.get(url, {配置})  // {params: {id: 1}}
+​    axios.delete(url, {配置})
+  ​    axios.post(url, data数据对象)
+  ​    axios.put(url, data数据对象)
+  
+    使用axios发ajax请求携带参数:
+       params参数: 只能拼在路径中: /admin/product/baseTrademark/delete/1
+       query参数: 
+        拼在路径中的?后面: /admin/product/baseTrademark?id=1
+        通过params配置来指定: axios({params: {id: 1}})
+      请求体参数: 
+        通过data配置或post()/put()的第二个参数指定
+
+### 7. Trade交易页
+
+* 搭建静态网页
+* 请求数据，渲染页面
+* 处理用户逻辑
+* 跳转订单页面，并携带交易页交易ID
+
+### 8. Pay订单支付页
+
+* 搭建静态页面
+* 请求数据，渲染页面
+* 处理用户点击立即支付逻辑
+  * 使用**element-ui**
+    * element-ui影响了页面样式
+    * 需要重写进行覆盖
+  * 处理支付逻辑
+
+```js
+async promptlyPay() {
+        /**
+         * With promises
+         * 弹出消息盒子
+         */
+        try {
+            // 处理二维码逻辑，qrcode把支付链接转换为二维码信息
+          const result = await QRCode.toDataURL(this.payData.codeUrl) // 把支付链接信息转化未二维码图片链接
+          /**
+           * 二维码显示成功后，我们需要时时刻刻去查看订单的支付状态信息，如果支付状态信息是成功那么就自动跳转。如果是失败继续查看
+           * 处理用户点击行为  点击确认和点击取消  在beforeClose当中去处理，可以让我们选择的去关闭消息盒子
+           */
+
+          // this.$alert 返回的上一个Promise，成功对应确认按钮，失败对应取消按钮
+          this.$alert(`<img src="${result}" />`, '请使用微信扫码支付', {
+            dangerouslyUseHTMLString: true,
+            center: true,
+            showClose: false,
+            showCancelButton: true,
+            cancelButtonText: "支付中遇到了问题",
+            confirmButtonText: "我已成功支付",
+            beforeClose: (action, instance, done) => {
+              if(action === "confirm") {
+                if(this.status === 200) {
+                  clearInterval(this.timer)
+                  this.timer = null
+                  done()
+                  this.$router.push("/paysuccess")
+                }else {
+                  this.$message.warning("请确保支付成功")
+                }
+              }else if(action === "cancel") {
+                clearInterval(this.timer)
+                this.timer = null
+                this.$message.warning("请联系前台小姐姐")
+                done()
+              }
+            }
+          }).then(() => {}).catch(() => {})
+        }catch(error) {
+          this.$message.error(error.message)
+        }
+
+        if(!this.timer) {
+          const { orderId } = this.payData
+          this.timer = setInterval(async () => {
+            const response = await this.$API.reqPayStatus(orderId)
+            if(response.code === 200) {
+              // 支付成功的状态码保存一下,为了用户点击成功支付按钮的时候去判断
+              this.status = response.code
+              clearInterval(this.timer)
+              this.timer = null // 虽然取消了定时器，但定时器编号并没有处理，所以这儿的进行处理
+              this.$msgbox.close() // 关闭盒子
+              this.$router.push("/paysuccess")
+            }
+          }, 1500)
+        }
+      }
+	难点：先保存状态，后面再对状态进行处理
+```
+
+* 处理完逻辑，跳转支付成功页面
+

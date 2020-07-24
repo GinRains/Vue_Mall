@@ -6,6 +6,8 @@ import Detail from "@/views/Detail"
 import AddCart from "@/views/AddCart"
 import ShopCart from "@/views/ShopCart"
 import Trade from "@/views/Trade"
+import Pay from "@/views/Pay"
+import PaySuccess from "@/views/PaySuccess"
 
 const routes = [
   {
@@ -52,6 +54,14 @@ const routes = [
   {
     path: "/trade",
     component: Trade
+  },
+  {
+    path: "/pay",
+    component: Pay
+  },
+  {
+    path: "/paysuccess",
+    component: PaySuccess
   }
 ]
 

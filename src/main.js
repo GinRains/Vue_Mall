@@ -4,11 +4,17 @@ import App from './App.vue'
 import router from "./router"
 import store from "./store"
 import "./mock/mockServe"
+import * as API from "@/api"
+
+import { MessageBox, Message } from "element-ui"
 
 import TypeNav from "./components/TypeNav"
 import SlideShow from "./components/SlideShow"
 
 Vue.config.productionTip = false
+Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$alert = MessageBox.alert
+Vue.prototype.$message = Message
 
 const originPush = VueRouter.prototype.push
 const originReplace = VueRouter.prototype.replace
@@ -35,6 +41,7 @@ Vue.component("SlideShow", SlideShow)
 new Vue({
   beforeCreate() {
     Vue.prototype.$bus = this;
+    Vue.prototype.$API = API;
   },
   render: h => h(App),
   router,
