@@ -9,29 +9,41 @@
       </h3>
       <div class="content">
         <label>手机号:</label>
-        <input type="text" placeholder="请输入你的手机号" v-model="mobile">
-        <span class="error-msg">错误提示信息</span>
+        <input v-model="mobile" name="phone" v-validate="{required: true,regex: /^1\d{10}$/}"
+               placeholder="请输入您的手机号"
+               :class="{invalid: errors.has('phone')}">
+        <span class="error-msg">{{ errors.first('phone') }}</span>
       </div>
       <div class="content">
         <label>验证码:</label>
-        <input type="text" placeholder="请输入验证码" v-model="code">
+        <input v-model="code" name="code" v-validate="{required: true,regex: /^\d{4}$/}"
+               placeholder="请输入验证码"
+               :class="{invalid: errors.has('code')}">
         <img ref="code" src="/api/user/passport/code" alt="code" @click="updateCode">
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{ errors.first('code') }}</span>
       </div>
       <div class="content">
         <label>登录密码:</label>
-        <input type="text" placeholder="请输入你的登录密码" v-model="password">
-        <span class="error-msg">错误提示信息</span>
+        <input v-model="password" name="password" v-validate="{required: true,regex: /\w{6,}/}"
+               placeholder="请输入您的密码"
+               :class="{invalid: errors.has('password')}"/>
+        <span class="error-msg">{{ errors.first('password') }}</span>
       </div>
       <div class="content">
         <label>确认密码:</label>
-        <input type="text" placeholder="请输入确认密码" v-model="surePassword">
-        <span class="error-msg">错误提示信息</span>
+        <input v-model="surePassword" name="surePassword" v-validate="{required: true, is: (password)}"
+               placeholder="请确认您的密码"
+               :class="{invalid: errors.has('surePassword')}">
+        <span class="error-msg">{{ errors.first('surePassword') }}</span>
       </div>
       <div class="controls">
-        <input name="m1" type="checkbox" >
+        <input v-model="agree"
+               type="checkbox"
+               name="agree"
+               v-validate="{agree:true}"
+               :class="{invalid: errors.has('agree')}"/>
         <span>同意协议并注册《尚品汇用户协议》</span>
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{ errors.first('agree') }}</span>
       </div>
       <div class="btn">
         <button @click="submitRegister">完成注册</button>
@@ -58,6 +70,8 @@
 </template>
 
 <script>
+  import store from "@/store"
+
   export default {
     name: 'Register',
     data() {
@@ -65,7 +79,8 @@
         mobile: "",
         password: "",
         code: "",
-        surePassword: ""
+        surePassword: "",
+        agree: ""
       }
     },
     methods: {
@@ -73,17 +88,27 @@
         this.$refs.code.src = "/api/user/passport/code"
       },
       async submitRegister() {
-        const { mobile, password, code, surePassword } = this
-        if(mobile.trim() && password.trim() && code.trim() && surePassword.trim() && password.trim() === surePassword.trim()) {
-          const userInfo = { mobile, password, code }
-          try {
-            const response = await this.$store.dispatch("userRegister", userInfo)
-            alert(response)
-            this.$router.push("/login")
-          }catch(error) {
-            alert(error.message)
+        const success = await this.$validator.validateAll()
+        if(success) { // 保证都通过，才执行下面函数
+          const { mobile, password, code, surePassword } = this
+          if(mobile.trim() && password.trim() && code.trim() && surePassword.trim() && password.trim() === surePassword.trim()) {
+            const userInfo = { mobile, password, code }
+            try {
+              const response = await this.$store.dispatch("userRegister", userInfo)
+              alert(response)
+              this.$router.push("/login")
+            }catch(error) {
+              alert(error.message)
+            }
           }
         }
+      }
+    },
+    beforeRouteEnter(to, from, next) {
+      if(store.state.userabout.userInfo.name) {
+        next("/")
+      }else {
+        next()
       }
     }
   }

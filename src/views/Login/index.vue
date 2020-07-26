@@ -16,12 +16,18 @@
           <div class="content">
             <form>
               <div class="input-text clearFix">
-                <span></span>
-                <input type="text" placeholder="邮箱/用户名/手机号" v-model="mobile">
+                <input v-model="mobile" name="phone" v-validate="{required: true,regex: /^1\d{10}$/}"
+                       placeholder="请输入您的手机号"
+                       :class="{invalid: errors.has('phone')}">
+                <span class="mobile"></span>
+                <i class="error-msg">{{ errors.first('phone') }}</i>
               </div>
               <div class="input-text clearFix">
+                <input v-model="password" name="password" v-validate="{required: true,regex: /\w{6,}/}"
+                       placeholder="请输入您的密码"
+                       :class="{invalid: errors.has('password')}"/>
                 <span class="pwd"></span>
-                <input type="text" placeholder="请输入密码" v-model="password">
+                <i class="pwd error-msg">{{ errors.first('password') }}</i>
               </div>
               <div class="setting clearFix">
                 <label class="checkbox inline">
@@ -76,15 +82,22 @@
     },
     methods: {
       async userLogin() {
-        const { mobile, password } = this
-        if(mobile.trim() && password.trim()) {
-          const userInfo = { mobile, password }
-          try {
-            await this.$store.dispatch("userLogin", userInfo)
-            alert("登录成功，即将跳转首页...")
-            this.$router.push("/home")
-          }catch (error) {
-           alert(error.message)
+        const success = await this.$validator.validateAll()
+
+        if(success) {
+          const { mobile, password } = this
+          if(mobile.trim() && password.trim()) {
+            const userInfo = { mobile, password }
+            try {
+              await this.$store.dispatch("userLogin", userInfo)
+              const redirectPath = this.$route.query.redirect
+              alert(`登录成功，即将跳转${redirectPath ? "订单" : "首"}页...`)
+              if(redirectPath) {
+                this.$router.push(redirectPath)
+              }else this.$router.push("/home")
+            }catch (error) {
+              alert(error.message)
+            }
           }
         }
       }
@@ -157,21 +170,40 @@
             font-size: 12px;
             line-height: 18px;
 
-            .input-text {
-              margin-bottom: 16px;
+            position: relative;
 
+            .input-text {
+              margin-bottom: 30px;
+
+              i {
+                position: absolute;
+                font-size: 18px;
+                color: red;
+                left: 40px;
+                top: 34px;
+                &.pwd {
+                  lert: 10px;
+                  top: 34px;
+                }
+              }
               span {
-                float: left;
+                /*float: left;*/
                 width: 37px;
                 height: 32px;
+                margin-left: 3px;
                 border: 1px solid #ccc;
                 background: url(../../assets/images/icons.png) no-repeat -10px -201px;
                 box-sizing: border-box;
                 border-radius: 2px 0 0 2px;
+                position: absolute;
+                left: 0;
+                top: 0;
               }
 
               .pwd {
                 background-position: -72px -201px;
+
+                margin-top: 62px;
               }
 
               input {
@@ -180,7 +212,7 @@
                 box-sizing: border-box;
                 border: 1px solid #ccc;
                 border-left: none;
-                float: left;
+                /*float: left;*/
                 padding-top: 6px;
                 padding-bottom: 6px;
                 font-size: 14px;
@@ -190,6 +222,8 @@
 
                 border-radius: 0 2px 2px 0;
                 outline: none;
+
+                margin-left: 40px;
               }
             }
 

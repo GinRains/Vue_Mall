@@ -39,3 +39,6 @@ export const reqPayOrder = orderId => beg.get(`/payment/weixin/createNative/${or
 
 // 请求订单支付状态
 export const reqPayStatus = orderId => beg.get(`/payment/weixin/queryPayStatus/${orderId}`)
+
+// 请求我的订单列表
+export const reqMyOrder = ({page, limit}) => beg.get(`/order/auth/${page}/${limit}`)

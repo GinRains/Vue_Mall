@@ -71,7 +71,9 @@
             <li class="yui3-u-1-5" v-for="goods in goodsList" :key="goods.id">
               <div class="list-wrap">
                 <div class="p-img">
-                  <router-link :to="{name: 'Detail', params: {goodsId: goods.id}}"><img :src="goods.defaultImg" /></router-link>
+                  <router-link :to="{name: 'Detail', params: {goodsId: goods.id}}">
+                    <img v-lazy="goods.defaultImg" />
+                  </router-link>
                 </div>
                 <div class="price">
                   <strong>
@@ -86,8 +88,7 @@
                   <i class="command">已有<span>2000</span>人评价</i>
                 </div>
                 <div class="operate" @click="addGoodsToShopCart(goods.id)">
-                  <a href="javascript:;"
-                               class="sui-btn btn-bordered btn-danger">加入购物车</a>
+                  <a href="javascript:;" class="sui-btn btn-bordered btn-danger">加入购物车</a>
                   <a href="javascript:void(0);" class="sui-btn btn-bordered">收藏</a>
                 </div>
               </div>
@@ -98,6 +99,7 @@
           <Pagination
             :pageSize="searchParams.pageSize"
             :continuePage="5"
+            :total="total"
             @changePage="changePage"
             :currentPage="searchParams.pageNo"></Pagination>
         </div>
@@ -192,7 +194,6 @@
 
 <script>
   import SearchSelector from "./SearchSelector"
-  import Pagination from "./Pagination"
   import { mapGetters } from "vuex"
 
   export default {
@@ -328,7 +329,7 @@
       }
     },
     computed: {
-      ...mapGetters(["goodsList"]),
+      ...mapGetters(["goodsList", "total"]),
       sortType() {
         return this.searchParams.order.split(':')[0]
       },
@@ -346,8 +347,7 @@
       deep: true
     },
     components: {
-      SearchSelector,
-      Pagination
+      SearchSelector
     }
   }
 </script>

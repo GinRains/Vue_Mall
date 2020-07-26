@@ -117,7 +117,7 @@
             confirmButtonText: "我已成功支付",
             beforeClose: (action, instance, done) => {
               if(action === "confirm") {
-                if(this.status === 200) {
+                if(this.status !== 200) {
                   clearInterval(this.timer)
                   this.timer = null
                   done()

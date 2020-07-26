@@ -73,6 +73,8 @@ npm run build
   * 轮播图组件封装
 
     * 使用**watch + vm.$nextTick**
+    
+  * mock构建的服务，须在入口引入服务，这样mock服务才开始运作
 
 ### 2. Search搜索页
 
@@ -319,4 +321,112 @@ async promptlyPay() {
 ```
 
 * 处理完逻辑，跳转支付成功页面
+
+### 8. Center用户中心
+
+* **思考：**路由子组件不能通过组件间通信来传递数据
+  
+  * 路由组件都是在路由里注册的组件，没在路由里注册的组件都是非路由组件
+    * 路由组件存在创建与销毁过程，而非路由组件不存在
+  * 路由子组件是通过**router-view**来显示滴，他不是一个非路由组件
+  
+* 构建静态组件
+
+* 获取数据渲染页面
+
+  * 分页器：自定义组件
+  * 分页器：element-ui
+
+* vue-lazyloader 图片懒加载
+
+* 路由懒加载
+
+* 路由守卫的配置，提高项目健壮性
+
+  * 全局前置守卫
+    * 在路由配置，router.beforeEach方法
+  * 路由独享守卫
+    * 在对应路由配置，beforeEnter方法
+    * 路由独享守卫的to对象指向**当前配置**的路由
+  * 路由组件守卫(**不建议用**，且方法里面的this不指向当前组件对象)
+    * beforeRouteEnter
+    * beforeRouteUpdate
+    * beforeRouteLeave
+
+* vee-validate 验证插件使用
+
+  * # 1. 说明
+
+        vee-validate是专门用来做表单验证的vue插件
+        我们当前用的是2.x的版本, 最新的3.x版本使用比较麻烦
+        github地址: https://github.com/logaretm/vee-validate
+        内置校验规则: https://github.com/logaretm/vee-validate/tree/v2/src/rules
+        中文messages: https://github.com/logaretm/vee-validate/blob/v2/locale/zh_CN.js
+
+    # 2. 使用
+
+    ## 1). 引入
+
+        下载: npm install -S vee-validate@2.2.15   
+        引入插件:
+            import Vue from 'vue'
+            import VeeValidate from 'vee-validate'
+            
+            Vue.use(VeeValidate)
+
+    ## 2). 基本使用
+
+         <input v-model="mobile" name="phone" v-validate="{required: true,regex: /^1\d{10}$/}" 
+              :class="{invalid: errors.has('phone')}">
+         <span class="error-msg">{{ errors.first('phone') }}</span>
+         
+         // 确认密码逻辑
+         <input v-model="surePassword" name="surePassword" 
+         			v-validate="{required: true, is: (password)}" // is是确认密码是否正确，这儿不能写正则
+                    placeholder="请确认您的密码"
+                    :class="{invalid: errors.has('surePassword')}">
+         <span class="error-msg">{{ errors.first('surePassword') }}</span>
+         
+         // 协议写法
+         <input v-model="agree"
+                       type="checkbox"
+                       name="agree"
+                       v-validate="{agree:true}"
+                       :class="{invalid: errors.has('agree')}"/>
+         <span>同意协议并注册《尚品汇用户协议》</span>
+         <span class="error-msg">{{ errors.first('agree') }}</span>
+         
+         // 对所有表单项进行验证，须在 await this.$validator.validateAll() 返回成功的值，才提交表单
+         const success = await this.$validator.validateAll() 
+         
+         问题: 提示文本默认都是英文的
+
+    ## 3). 提示文本信息本地化，须在入口引入该js文件
+
+    	import VeeValidate from 'vee-validate'
+    	import zh_CN from 'vee-validate/dist/locale/zh_CN' // 引入中文message
+    	
+    	VeeValidate.Validator.localize('zh_CN', {
+    	  messages: {
+    	    ...zh_CN.messages,
+    	    is: (field) => `${field}必须与密码相同`  // 修改内置规则的message
+    	  },
+    	  attributes: { // 给校验的field属性名映射中文名称
+    	    phone: '手机号',
+    	    code: '验证码',
+    	  }
+    	})
+    	
+    	完整中文message源码: https://github.com/logaretm/vee-validate/blob/v2/locale/zh_CN.js
+
+    ## 4). 自定义验证规则
+
+        VeeValidate.Validator.extend('agree', {
+          validate: value => {
+            return value
+          },
+          getMessage: field => field + '必须同意'
+        })
+
+    
 

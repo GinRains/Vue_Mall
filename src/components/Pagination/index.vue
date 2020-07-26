@@ -24,8 +24,6 @@
 </template>
 
 <script>
-  import { mapGetters } from "vuex"
-
   export default {
     name: "Pagination",
     props: {
@@ -40,10 +38,13 @@
       continuePage: {
         type: Number,
         default: 5
+      },
+      total: {
+        type: Number,
+        default: 0
       }
     },
     computed: {
-      ...mapGetters(["total"]),
       // 总页数
       totalPage() {
         return Math.ceil(this.total / this.pageSize)
@@ -109,7 +110,7 @@
       }
 
       &.active {
-        cursor: not-allowed;
+        cursor: pointer;
         background-color: #409eff;
         color: #fff;
       }
