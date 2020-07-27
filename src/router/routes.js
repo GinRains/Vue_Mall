@@ -71,7 +71,14 @@ const routes = [
   },
   {
     path: "/shopcart",
-    component: ShopCart
+    component: ShopCart,
+    beforeEnter(to, from, next) {
+      if(store.state.userabout.userInfo.name) {
+        next()
+      }else {
+        next("/")
+      }
+    }
   },
   {
     path: "/trade",

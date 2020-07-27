@@ -80,7 +80,7 @@
         password: "",
         code: "",
         surePassword: "",
-        agree: ""
+        agree: false
       }
     },
     methods: {
