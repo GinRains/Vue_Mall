@@ -4,17 +4,17 @@
       <h3><i class="sui-icon icon-pc-right"></i>商品已成功加入购物车！</h3>
       <div class="goods">
         <div class="left-good">
-          <div class="left-pic">
-            <img src="good.skuDefaultImg">
+          <div class="left-pic" :style="{width: '80px', height: '80px'}">
+            <img style="width: 100%; height: 100%;" :src="skuInfo.skuDefaultImg">
           </div>
           <div class="right-info">
-            <p class="title">小米红米 Redmi note8 手机 梦幻蓝 全网通(4GB+64GB)</p>
-            <p class="attr">颜色：WFZ5099IH/5L钛金釜内胆 数量：2</p>
+            <p class="title">{{skuInfo.skuName}}</p>
+            <p class="attr">颜色：WFZ5099IH/5L钛金釜内胆 数量：{{$route.params.skuNum}}</p>
           </div>
         </div>
         <div class="right-gocart">
-          <a href="javascript:" class="sui-btn btn-xlarge">查看商品详情</a>
-          <a href="javascript:" >去购物车结算 > </a>
+          <a href="javascript:;" class="sui-btn btn-xlarge">查看商品详情</a>
+          <a href="javascript:;" @click="toShopCart">去购物车结算 > </a>
         </div>
       </div>
     </div>
@@ -24,6 +24,19 @@
 <script>
   export default {
     name: 'AddCartSuccess',
+    data() {
+      return {
+        skuInfo: {}
+      }
+    },
+    mounted() {
+      this.skuInfo = JSON.parse(sessionStorage.getItem("SKU_INFO_KEY"))
+    },
+    methods: {
+      toShopCart() {
+        this.$router.push("/shopcart")
+      }
+    }
   }
 </script>
 

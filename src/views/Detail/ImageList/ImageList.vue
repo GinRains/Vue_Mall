@@ -2,7 +2,7 @@
   <div class="swiper-container">
     <div class="swiper-wrapper">
       <div class="swiper-slide swiper-no-swiping" v-for="(img, index) in imgList" :key="img.id">
-        <img @click="changeChecked(index)" :src="img.imgUrl" :class="{active: img.isDefault === '1'}">
+        <img @click="changeChecked(index)" :src="img.imgUrl" :class="{active: index === currentIndex}">
       </div>
     </div>
     <div class="swiper-button-next"></div>
@@ -21,8 +21,14 @@
         type: Array
       }
     },
+    data() {
+      return {
+        currentIndex: 0
+      }
+    },
     methods: {
       changeChecked(index) {
+        this.currentIndex = index
         this.imgList.forEach(item => {
           item.isDefault = "0"
         })

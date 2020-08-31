@@ -74,12 +74,12 @@
             </div>
             <div class="cartWrap">
               <div class="controls">
-                <input :value="skuNum" autocomplete="off" class="itxt">
+                <input :value="skuNum" autocomplete="off" class="itxt" disabled>
                 <a href="javascript:;" class="plus" @click="skuNum++">+</a>
                 <a href="javascript:;" class="mins" @click="skuNum > 1 && skuNum--">-</a>
               </div>
               <div class="add">
-                <a href="javascript:">加入购物车</a>
+                <a href="javascript:;" @click="goAddCart">加入购物车</a>
               </div>
             </div>
           </div>
@@ -331,6 +331,8 @@
 
 <script>
   import {mapState, mapGetters} from 'vuex'
+  import {reqGoodsToCart} from '@/api'
+
   import ImageList from './ImageList/ImageList'
   import Zoom from './Zoom/Zoom'
 
@@ -358,6 +360,23 @@
       },
       changeIndex(index) {
         this.defaultIndex = index
+      },
+      async goAddCart() {
+        const skuId = this.goodsInfo.skuInfo.id
+        const skuNum = this.skuNum
+
+        const res = await reqGoodsToCart(skuId, skuNum)
+        if(res.code === 200) {
+          sessionStorage.setItem("SKU_INFO_KEY", JSON.stringify(this.goodsInfo.skuInfo))
+
+          this.$router.push({
+            name: "addToCart",
+            params: {
+              skuId,
+              skuNum
+            }
+          })
+        }
       }
     },
     computed: {

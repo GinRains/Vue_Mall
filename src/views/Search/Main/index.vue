@@ -176,6 +176,7 @@
 
 <script>
   import {mapGetters} from 'vuex'
+  import Pagination from '@/components/Pagination'
   import AttrSelector from './AttrSelector'
 
   export default {
@@ -281,7 +282,8 @@
       }
     },
     components: {
-      AttrSelector
+      AttrSelector,
+      Pagination
     }
   }
 </script>
